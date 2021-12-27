@@ -6,7 +6,7 @@ dotenv.config();
 
 
 const authenticationMiddleware = (req, res, next) => {
-  const {type} = req.body;
+  const {type} = req.body; 
 
     if(type === "auth"){
 
@@ -35,6 +35,7 @@ const authenticationMiddleware = (req, res, next) => {
 } 
 else if(type ==="google") {
     req.user = {isGoogle: true}
+    // console.log(req.body)
 }
 else {
        throw new UnauthenticationError("Authentication invalid..")

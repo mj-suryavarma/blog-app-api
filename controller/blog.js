@@ -6,6 +6,7 @@ import BlogModel from '../models/blog.js';
 
 export const createBlog = async(req,res) => {
     const {title, story, type,googleUserId, userName, googlePicture}  = req.body;
+
     const {userId, name } = req.user;
     var time = new Date();
     var currentTime = time.toLocaleTimeString();
@@ -25,9 +26,32 @@ export const createBlog = async(req,res) => {
     }
 }
 
-export const updateBlog = (req,res) => {
-    res.status(200).send("blog updated... ")
+export const updateBlog = async(req,res) => {
+    //  console.log("recieved", req)
+ 
+            const {title, story, type, userId, userName, googlePicture, blogId} = req.body;
+
+    // const {userId, name } = req.user;     or we can get directly from client because of some reasons
+    
+    var time = new Date();
+    var currentTime = time.toLocaleTimeString();
+    var currentDate = time.toLocaleDateString();
+    
+    const updatedBlog = await BlogModel.findOneAndUpdate({_id:blogId,  userId,},{time:currentTime, date:currentDate,title,story} ,{new:true, runValidators:true});
+
+   console.log("updated blog........",updatedBlog)
+    
+   if(!updateBlog){
+        res.status(StatusCodes.NOT_FOUND).json({err:`nothing any task with id: ${_id}`})
+
+    }
+  
+res.status(StatusCodes.OK).json({success:true},updatedBlog)
+
+
+
 }
+
 
 export const deleteBlog =(req,res) => {
     res.status(200).send("blog deleted ... ")
@@ -36,9 +60,7 @@ export const deleteBlog =(req,res) => {
 export const getAllBlog = async(req,res) => { 
 
    const  publicBlog =  await BlogModel.find().sort({"createdAt":-1});
-         
-        // console.log(publicBlog);
-
+        
     res.status(StatusCodes.OK).json(publicBlog);
 
 }
@@ -56,4 +78,25 @@ export const getSingleBlog = async (req,res) => {
      res.status(StatusCodes.OK).json(singleBlog);
      
     
+}
+
+export const getUserBlogs = async(req, res) => {
+    const {userId} = req.user;
+    const {googleUserId, type} = req.body;
+
+    if(type==="auth"){
+      const userBlog = await BlogModel.find({userId});
+
+          res.status(StatusCodes.OK).json(userBlog);
+    }
+
+    else if(type==="google"){
+        const googleUserBlog = await BlogModel.find({userId: googleUserId})
+
+            res.status(StatusCodes.OK).json(googleUserBlog)
+        
+    }
+    
+
+
 }
