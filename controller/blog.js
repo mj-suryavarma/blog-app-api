@@ -5,63 +5,78 @@ import BlogModel from '../models/blog.js';
 
 
 export const createBlog = async(req,res) => {
-    const {title, story, type,googleUserId, userName, googlePicture}  = req.body;
+    const {title, story, type,googleUserId, userName, googlePicture}  = await req.body;
 
-    const {userId, name } = req.user;
+     const {userId, name } = await req.user;
     var time = new Date();
     var currentTime = time.toLocaleTimeString();
     var currentDate = time.toLocaleDateString();
  
     if(type === "auth"){
 
+    try {
       const authStory =  await BlogModel.create({userId,userName:name, title, googlePicture,story, userType:type, time:currentTime, date:currentDate});
      
-        res.status(StatusCodes.CREATED).json({success:true, data: authStory})
- 
+       res.status(StatusCodes.CREATED).json({success:true, data: authStory})
     }
-    else if(type==="google"){
+    catch(err){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({err:err})
 
-       const googleUserBlog =  await BlogModel.create({title, time:currentTime, story,userType:type, userName, googlePicture, userId:googleUserId,date:currentDate})
+     }
+}
+
+else if(type==="google"){
+
+   try {       const googleUserBlog =  await BlogModel.create({title, time:currentTime, story,userType:type, userName, googlePicture, userId:googleUserId,date:currentDate})
          res.status(StatusCodes.CREATED).json({success:true,data:googleUserBlog})
-    }
+    }   catch(err){
+       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({err})
+} 
+        } 
 }
 
 export const updateBlog = async(req,res) => {
-    //  console.log("recieved", req)
- 
-            const {title, story, type, userId, userName, googlePicture, blogId} = req.body;
+            const {title, story, userId, blogId} = req.body;
 
-    // const {userId, name } = req.user;     or we can get directly from client because of some reasons
-    
+     
     var time = new Date();
     var currentTime = time.toLocaleTimeString();
     var currentDate = time.toLocaleDateString();
     
-    const updatedBlog = await BlogModel.findOneAndUpdate({_id:blogId,  userId,},{time:currentTime, date:currentDate,title,story} ,{new:true, runValidators:true});
+    const filter = {_id:blogId,userId}
+    const update = {title,story,time:currentTime,date:currentDate}
 
-   console.log("updated blog........",updatedBlog)
-    
+    const updatedBlog = await BlogModel.findOneAndUpdate(filter,update,{new:true,});
+ 
    if(!updateBlog){
-        res.status(StatusCodes.NOT_FOUND).json({err:`nothing any task with id: ${_id}`})
+       return res.status(StatusCodes.NOT_FOUND).json({err:`nothing any task with id: ${_id}`})
 
     }
   
-res.status(StatusCodes.OK).json({success:true},updatedBlog)
-
-
+        return res.status(StatusCodes.OK).json({success:true,data:updatedBlog})
 
 }
 
+export const deleteBlog = async(req,res) => {
 
-export const deleteBlog =(req,res) => {
-    res.status(200).send("blog deleted ... ")
+    const {BlogId} = req.body;
+    console.log("deleted response",req.body)
+    
+   const deletedBlod = await BlogModel.findOneAndDelete({_id:BlogId})
+ if(!deleteBlog){
+     return  res.status(StatusCodes.NOT_FOUND).json({success:false})
+ }
+   return res.status(StatusCodes.OK).json({success:true});
+
 }
+
 
 export const getAllBlog = async(req,res) => { 
+    console.log(req.body)
 
    const  publicBlog =  await BlogModel.find().sort({"createdAt":-1});
         
-    res.status(StatusCodes.OK).json(publicBlog);
+   return res.status(StatusCodes.OK).json(publicBlog);
 
 }
 
@@ -70,12 +85,12 @@ export const getSingleBlog = async (req,res) => {
     const {type , id} = req.body
     const singleBlog  =  await BlogModel.findOne({_id:id});
     
-    console.log(singleBlog)
+    // console.log(singleBlog)
 
     if(singleBlog === null){
-     res.status(StatusCodes.NOT_FOUND).json({err: "nothing here based your id..."})
+    return res.status(StatusCodes.NOT_FOUND).json({err: "nothing here based your id..."})
     }
-     res.status(StatusCodes.OK).json(singleBlog);
+   return  res.status(StatusCodes.OK).json(singleBlog);
      
     
 }
@@ -85,15 +100,15 @@ export const getUserBlogs = async(req, res) => {
     const {googleUserId, type} = req.body;
 
     if(type==="auth"){
-      const userBlog = await BlogModel.find({userId});
+      const userBlog = await BlogModel.find({userId}).sort({"createdAt":-1});;
 
-          res.status(StatusCodes.OK).json(userBlog);
+        return  res.status(StatusCodes.OK).json(userBlog);
     }
 
     else if(type==="google"){
-        const googleUserBlog = await BlogModel.find({userId: googleUserId})
+        const googleUserBlog = await BlogModel.find({userId: googleUserId}).sort({"createdAt":-1});
 
-            res.status(StatusCodes.OK).json(googleUserBlog)
+          return  res.status(StatusCodes.OK).json(googleUserBlog)
         
     }
     

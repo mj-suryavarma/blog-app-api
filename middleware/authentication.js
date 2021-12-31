@@ -5,22 +5,21 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const authenticationMiddleware = (req, res, next) => {
-  const {type} = req.body; 
-
-    if(type === "auth"){
-
+const authenticationMiddleware = async (req, res, next) => {
+  const {type} =  req.body; 
+  if(type === "auth"){
             
     const authHeader = req.headers.authorization;
 
-    
     if(!authHeader || !authHeader.startsWith("Bearer ")){
         throw new UnauthenticationError("Authentication Invalid.");
+       return
     }
     
+
     const token = authHeader.split(" ")[1];
     try{
-        const payload = jwt.verify(token,process.env.JWT_SECRET);
+        const payload = await jwt.verify(token,process.env.JWT_SECRET);
         
          req.user = {userId : payload.userId, name: payload.name}
          
@@ -35,7 +34,6 @@ const authenticationMiddleware = (req, res, next) => {
 } 
 else if(type ==="google") {
     req.user = {isGoogle: true}
-    // console.log(req.body)
 }
 else {
        throw new UnauthenticationError("Authentication invalid..")

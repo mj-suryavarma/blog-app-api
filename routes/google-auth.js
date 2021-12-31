@@ -1,11 +1,10 @@
 import express from 'express';
 const Router = express.Router();
 
-import {googleAuth} from '../controller/google-auth.js';
+import {googleAuth,googleUser,deleteUser} from '../controller/google-auth.js';
 
 
-Router.route('/google/auth').post(googleAuth);
-
-
+Router.route('/auth').post(googleAuth);
+Router.route('/user').post(googleUser).delete(deleteUser);
 
 export default Router;

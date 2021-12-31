@@ -1,7 +1,6 @@
 import express from 'express';
 const Router = express.Router();
 
-
 import 
 {getAllBlog,
      updateBlog,
@@ -10,10 +9,11 @@ import
      getSingleBlog,getUserBlogs} from '../controller/blog.js';
 
 
-Router.route('/app/allBlog').post(getAllBlog)
-Router.route('/app/blog').post(createBlog);
-Router.route('/app/blog/:id').patch(updateBlog).delete(deleteBlog).post(getSingleBlog);
-Router.route('/app/user/blog').post(getUserBlogs);
+Router.route('/allBlog').post(getAllBlog)
+Router.route('/blog').post(createBlog);
+Router.route('/blog/:id').post(getSingleBlog);
+Router.route('/user/blog').post(getUserBlogs);
+Router.route('/user/blog/:id').patch(updateBlog).delete(deleteBlog)
 
 
 export default Router;

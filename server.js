@@ -14,6 +14,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 app.use(express.json());
 app.use(cors());
+app.use(express.urlencoded({extended:true}))
 
 
 /// db config
@@ -27,19 +28,21 @@ import authenticationMiddleware from './middleware/authentication.js';
 
 const port = process.env.PORT || 8000;
 
+
+
+// app.use(ErrorHandlerMiddleware);
+// app.use(NotFound);
+
+
 app.use('/api/v1',authRoutes);
-app.use('/api/v1',GoogleRoutes);
-app.use('/api/v1',authenticationMiddleware,BlogRoutes);
-// app.use('/api/v1/get',publicBlog);
+app.use('/api/v1/google',GoogleRoutes);
+app.use('/api/v1/app',authenticationMiddleware,BlogRoutes);
 
 
 app.get('/',(req,res)=>{
     res.status(200).send("hello world from backend...")
 })
 
-
-app.use(NotFound);
-app.use(ErrorHandlerMiddleware);
 
 const start = () => {
 
