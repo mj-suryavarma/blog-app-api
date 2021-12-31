@@ -83,8 +83,7 @@ else {
  
    userBlogArray.map(async(element) => {
      
-     const deleteUserBlog = await BlogModel.findOneAndDelete({_id:element.id});
-       console.log("deleted user blogs",deleteUserBlog); 
+     const deleteUserBlog = await BlogModel.findOneAndDelete({_id:element.id}); 
       });
       
       return res.status(StatusCodes.OK).json({success:true});

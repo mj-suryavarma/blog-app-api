@@ -27,7 +27,6 @@ export const Register = async(req, res) =>{
 
 
 export const Login = async(req,res) =>{
-    console.log(req.body)
      const {email, password} = req.body
     
    if(!email || !password){       
@@ -92,7 +91,6 @@ export const deleteUser = async(req, res) => {
    userBlogArray.map(async(element) => {
      
      const deleteUserBlog = await BlogModel.findOneAndDelete({_id:element.id});
-       console.log("deleted user blogs",deleteUserBlog);
 
       });
       

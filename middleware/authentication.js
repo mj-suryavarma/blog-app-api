@@ -23,8 +23,7 @@ const authenticationMiddleware = async (req, res, next) => {
         
          req.user = {userId : payload.userId, name: payload.name}
          
-        /// attached for call back function
-         console.log("payload",payload)
+        /// attached for call back function 
         
     } catch(err) {
         

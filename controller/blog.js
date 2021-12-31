@@ -60,7 +60,6 @@ export const updateBlog = async(req,res) => {
 export const deleteBlog = async(req,res) => {
 
     const {BlogId} = req.body;
-    console.log("deleted response",req.body)
     
    const deletedBlod = await BlogModel.findOneAndDelete({_id:BlogId})
  if(!deleteBlog){
@@ -72,7 +71,6 @@ export const deleteBlog = async(req,res) => {
 
 
 export const getAllBlog = async(req,res) => { 
-    console.log(req.body)
 
    const  publicBlog =  await BlogModel.find().sort({"createdAt":-1});
         
@@ -85,7 +83,6 @@ export const getSingleBlog = async (req,res) => {
     const {type , id} = req.body
     const singleBlog  =  await BlogModel.findOne({_id:id});
     
-    // console.log(singleBlog)
 
     if(singleBlog === null){
     return res.status(StatusCodes.NOT_FOUND).json({err: "nothing here based your id..."})

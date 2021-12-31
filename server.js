@@ -5,8 +5,7 @@ import authRoutes from './routes/auth.js';
 import cors from 'cors';
 import GoogleRoutes from './routes/google-auth.js';
 import BlogRoutes from './routes/blog.js';
-import publicBlog from './routes/public-blog.js'
-
+ 
 
 /// dot env config
 import dotenv from 'dotenv';
@@ -21,17 +20,12 @@ app.use(express.urlencoded({extended:true}))
 import { connectDB } from './db/connect.js';
 
 
-//// middle ware
-import NotFound from './middleware/notfound.js';
-import ErrorHandlerMiddleware from './middleware/error-handler.js';
+//// middle ware 
 import authenticationMiddleware from './middleware/authentication.js';
 
 const port = process.env.PORT || 8000;
 
 
-
-// app.use(ErrorHandlerMiddleware);
-// app.use(NotFound);
 
 
 app.use('/api/v1',authRoutes);
